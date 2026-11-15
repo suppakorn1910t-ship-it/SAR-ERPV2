@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>SiteCost ERP Pro - ระบบบริหารงานรับเหมาก่อสร้าง</title>
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --bg-page: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #0284c7;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --success-bg: #d1fae5;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+      --warn-bg: #fef3c7;
+      --purple: #8b5cf6;
+      --radius: 16px;
+      --shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
+      --safe-bottom: env(safe-area-inset-bottom, 10px);
+      --safe-top: env(safe-area-inset-top, 0px);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Sarabun", "Prompt", "Segoe UI", sans-serif;
+      background: var(--bg-page);
+      color: var(--text);
+      line-height: 1.45;
+      padding-bottom: calc(82px + var(--safe-bottom));
+      overflow-x: hidden;
+    }
+    .app-shell { max-width: 540px; margin: 0 auto; min-height: 100vh; background: var(--bg-page); overflow-x: hidden; }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #fff;
+      padding: calc(12px + var(--safe-top)) 14px 11px;
+      position: sticky; top: 0; z-index: 40;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.28);
+    }
+    .header-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .brand-icon {
+      width: 38px; height: 38px; border-radius: 11px;
+      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .brand-title { font-size: 16px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 6px; }
+    .badge-erp { background: #eab308; color: #0f172a; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 5px; }
+    .brand-sub { font-size: 11px; color: #38bdf8; display: flex; align-items: center; gap: 6px; margin-top: 1px; }
+    .sync-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px;
+      background: rgba(255,255,255,0.12); color: #cbd5e1; cursor: pointer;
+    }
+    .sync-pill.online { background: rgba(16,185,129,0.22); color: #6ee7b7; }
+    .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .header-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .pill-btn {
+      background: rgba(255,255,255,0.11); border: 1px solid rgba(255,255,255,0.18);
+      color: #fff; border-radius: 999px; padding: 6px 10px;
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 5px; cursor: pointer;
+    }
+    .role-btn { background: rgba(234,179,8,0.18); border-color: rgba(234,179,8,0.45); color: #fde047; }
+
+    .sub-bar {
+      margin-top: 9px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px;
+    }
+    .sub-bar-left { color: #e2e8f0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .sub-bar-right { color: #38bdf8; font-weight: 700; background: none; border: none; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+
+    /* Content & Cards */
+    .content { padding: 12px; }
+    .tab-panel { display: none; animation: fadeIn 0.18s ease; }
+    .tab-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card {
+      background: var(--card); border-radius: var(--radius); padding: 14px;
+      margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid rgba(226,232,240,0.85);
+    }
+    .card-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 11px; flex-wrap: wrap; }
+    .card-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+
+    /* Grids & Stats */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 9px 7px; min-width: 0; }
+    .stat-label { font-size: 10.5px; color: var(--text-muted); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stat-val { font-size: clamp(11.5px, 3.2vw, 14.5px); font-weight: 800; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .progress-wrap { background: #e2e8f0; height: 9px; border-radius: 999px; overflow: hidden; margin-top: 10px; }
+    .progress-bar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #0ea5e9, #0284c7); transition: width 0.3s; }
+    .progress-bar.warn { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+    .progress-bar.danger { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 5px; font-weight: 600; }
+
+    /* Segmented Sub-tabs */
+    .seg-tabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
+    .seg-btn {
+      border: none; background: transparent; border-radius: 9px; padding: 8px;
+      font-family: inherit; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer;
+    }
+    .seg-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 6px rgba(15,23,42,0.08); }
+
+    /* Donut */
+    .chart-layout { display: flex; align-items: center; justify-content: space-between; gap: 11px; }
+    .donut-box { position: relative; width: 138px; height: 138px; flex-shrink: 0; }
+    .donut-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .donut-slice { cursor: pointer; }
+    .donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; padding: 12px; }
+    .donut-center-label { font-size: 10px; color: var(--text-muted); font-weight: 700; max-width: 82px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .donut-center-val { font-size: 13.5px; font-weight: 800; }
+    .donut-center-pct { font-size: 10.5px; font-weight: 700; color: var(--primary); }
+    .legend-list { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .legend-item { display: flex; align-items: center; justify-content: space-between; gap: 5px; font-size: 11.5px; padding: 3px 5px; border-radius: 7px; cursor: pointer; }
+    .legend-item.active { background: #f1f5f9; }
+    .legend-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .legend-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+    .legend-name { color: #334155; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .legend-val { font-weight: 700; flex-shrink: 0; }
+
+    /* Inputs & Buttons */
+    .input-box, .select-box {
+      width: 100%; padding: 9px 11px; border: 1.5px solid var(--border); border-radius: 11px;
+      font-size: 14px; font-family: inherit; color: var(--text); background: #fff; outline: none;
+    }
+    .input-box:focus, .select-box:focus { border-color: var(--primary); }
+    .form-group { margin-bottom: 11px; }
+    .form-label { display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      border: none; border-radius: 11px; padding: 10px 14px; font-size: 13.5px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-dark { background: #0f172a; color: #fff; }
+    .btn-success { background: #059669; color: #fff; }
+    .btn-warning { background: #d97706; color: #fff; }
+    .btn-danger-soft { background: var(--danger-bg); color: var(--danger); }
+    .btn-outline { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-full { width: 100%; }
+    .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 9px; }
+
+    /* Lists & Badges */
+    .item-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 10px 0; border-bottom: 1px solid #f1f5f9;
+    }
+    .item-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .item-main { min-width: 0; flex: 1; }
+    .item-title { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-meta { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+    .item-right { text-align: right; flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
+
+    .badge { display: inline-block; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 999px; }
+    .badge-pending { background: #fef3c7; color: #b45309; }
+    .badge-approved { background: #e0f2fe; color: #0369a1; }
+    .badge-received { background: #d1fae5; color: #047857; }
+    .badge-rejected { background: #fee2e2; color: #b91c1c; }
+    .badge-count { background: #e2e8f0; color: #334155; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; }
+
+    .icon-btn {
+      width: 29px; height: 29px; border-radius: 8px; border: none; background: #f8fafc;
+      color: #64748b; display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .icon-btn.del:hover { background: #fee2e2; color: #ef4444; }
+
+    .text-danger { color: var(--danger); font-weight: 700; }
+    .text-success { color: #059669; font-weight: 700; }
+    .text-primary { color: var(--primary); font-weight: 700; }
+
+    /* Table */
+    .table-wrap { border: 1px solid var(--border); border-radius: 13px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead { background: #0f172a; color: #fff; }
+    th, td { padding: 9px 7px; text-align: right; border-bottom: 1px solid #f1f5f9; }
+    th:first-child, td:first-child { text-align: left; padding-left: 10px; }
+    th:last-child, td:last-child { padding-right: 10px; }
+    tr:last-child td { border-bottom: none; }
+    tr.active-row { background: #f0f9ff; }
+
+    /* Calc Box */
+    .calc-box { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1.5px solid #bae6fd; border-radius: 13px; padding: 12px; margin: 10px 0; }
+    .calc-row { display: flex; justify-content: space-between; font-size: 13px; color: #475569; margin-bottom: 4px; }
+    .calc-total { display: flex; justify-content: space-between; align-items: center; padding-top: 7px; margin-top: 6px; border-top: 1px solid #bae6fd; font-weight: 800; font-size: 15px; }
+
+    /* Bottom Nav (5 ERP Modules) */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 540px;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      padding: 6px 2px calc(6px + var(--safe-bottom));
+      z-index: 45; box-shadow: 0 -4px 18px rgba(15,23,42,0.06);
+    }
+    .nav-btn {
+      background: none; border: none; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 3px; font-family: inherit; font-size: 10.5px; font-weight: 700;
+      color: #64748b; cursor: pointer; padding: 3px 0;
+    }
+    .nav-btn.active { color: var(--primary); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(3px);
+      display: none; align-items: flex-end; justify-content: center; z-index: 60;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-sheet {
+      width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; background: #fff;
+      border-radius: 20px 20px 0 0; padding: 16px 16px calc(20px + var(--safe-bottom));
+      animation: slideUp 0.2s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .modal-title { font-size: 16.5px; font-weight: 800; margin: 0; }
+    .close-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #f1f5f9; font-size: 18px; cursor: pointer; }
+
+    .toast {
+      position: fixed; top: calc(70px + var(--safe-top)); left: 50%; transform: translateX(-50%) translateY(-14px);
+      background: #0f172a; color: #fff; padding: 9px 15px; border-radius: 999px;
+      font-size: 12.5px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.22s; z-index: 90; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .empty-state { text-align: center; padding: 22px 10px; color: var(--text-muted); font-size: 13px; }
+    .pr-card { border: 1.5px solid var(--border); border-radius: 13px; padding: 11px; margin-bottom: 9px; background: #fff; }
+    .pr-actions { display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap; }
+
+    @media print {
+      .header, .bottom-nav, .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .card { box-shadow: none; border: 1px solid #cbd5e1; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-top">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 15v-3a6 6 0 0 1 6-6"/><path d="M14 6a6 6 0 0 1 6 6v3"/></svg>
+        </div>
+        <div>
+          <h1 class="brand-title">SiteCost ERP <span class="badge-erp">MANGO STYLE</span></h1>
+          <div class="brand-sub">
+            <span id="syncPill" class="sync-pill" onclick="switchTab('tab-finance'); openSyncModal();">
+              <span class="sync-dot"></span>
+              <span id="syncStatusText">Offline (เฉพาะเครื่องนี้)</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="pill-btn role-btn" onclick="toggleRoleModal()">
+          <span id="roleLabel">Admin</span>
+        </button>
+        <button class="pill-btn" onclick="openJobSwitcher()">
+          <span id="headerJobCode">IJ001</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="sub-bar">
+      <div class="sub-bar-left" id="headerJobFull">IJ001 - งานโครงสร้างอาคาร A (คืบหน้า 35%)</div>
+      <button class="sub-bar-right" onclick="openJobSwitcher()">เปลี่ยนงาน</button>
+    </div>
+  </header>
+
+  <main class="content">
+    <!-- TAB 1: DASHBOARD & COST -->
+    <section id="tab-dash" class="tab-panel active">
+      <!-- Company Overview -->
+      <div class="card">
+        <div class="card-header" style="margin-bottom: 8px;">
+          <div class="card-title">📊 ภาพรวมทุกโครงการ (Executive)</div>
+          <span class="badge-count" id="totalProjectBadge">0 งาน</span>
+        </div>
+        <div class="grid-3">
+          <div class="stat-box">
+            <div class="stat-label">รับเงินแล้ว (AR)</div>
+            <div class="stat-val text-primary" id="compIncome">฿0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">ต้นทุนจริง (Cost)</div>
+            <div class="stat-val text-danger" id="compCost">฿0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">กระแสเงินสดสุทธิ</div>
+            <div class="stat-val text-success" id="compProfit">฿0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Job Budget -->
+      <div class="card">
+        <div class="card-header" style="margin-bottom: 8px;">
+          <div class="card-title">🏗️ งบประมาณรหัสงาน: <span id="dashJobCode" class="text-primary">IJ001</span></div>
+          <button class="btn btn-outline btn-sm" onclick="openJobModal(getActiveJob().code)">แก้ไขงาน/คืบหน้า</button>
+        </div>
+        <div class="grid-3">
+          <div class="stat-box">
+            <div class="stat-label">งบสัญญา</div>
+            <div class="stat-val" id="statBudget">฿0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">จ่ายแล้ว</div>
+            <div class="stat-val text-danger" id="statSpent">฿0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">งบคงเหลือ</div>
+            <div class="stat-val text-success" id="statRemain">฿0</div>
+          </div>
+        </div>
+        <div class="progress-wrap"><div id="budgetProgressBar" class="progress-bar" style="width:0%"></div></div>
+        <div class="progress-meta">
+          <span id="budgetPctText">ใช้ไป 0% ของงบ</span>
+          <span id="jobProgressText">ความคืบหน้างาน: 0%</span>
+        </div>
+      </div>
+
+      <!-- Donut Breakdown -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🍩 สัดส่วนต้นทุนแยกหมวด (Cost Code)</div>
+        </div>
+        <div class="chart-layout">
+          <div class="donut-box">
+            <svg id="donutSvg" class="donut-svg" viewBox="0 0 120 120"></svg>
+            <div class="donut-center">
+              <div class="donut-center-label" id="donutLabel">รวม</div>
+              <div class="donut-center-val" id="donutVal">฿0</div>
+              <div class="donut-center-pct" id="donutPct">100%</div>
+            </div>
+          </div>
+          <div id="legendList" class="legend-list"></div>
+        </div>
+      </div>
+
+      <!-- Cost Ledger -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧾 บัญชีค่าใช้จ่าย <span class="badge-count" id="expenseCount">0</span></div>
+          <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">+ ลงค่าใช้จ่าย</button>
+        </div>
+        <div class="grid-2" style="margin-bottom: 10px;">
+          <input type="text" id="searchExpense" class="input-box" placeholder="ค้นหารายการ/ร้านค้า..." oninput="renderDash()" style="padding:7px 10px; font-size:13px;" />
+          <select id="filterCategory" class="select-box" onchange="renderDash()" style="padding:7px 10px; font-size:13px;"></select>
+        </div>
+        <div id="expenseList"></div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PROCUREMENT (PR -> PO -> RECEIVE) -->
+    <section id="tab-procure" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🛒 จัดซื้อ &amp; อนุมัติ (PR / PO)</div>
+          <button class="btn btn-primary btn-sm" onclick="openPRModal()">+ ขอซื้อ (PR)</button>
+        </div>
+        <div class="grid-3" style="margin-bottom: 10px;">
+          <div class="stat-box"><div class="stat-label">รออนุมัติ (PR)</div><div class="stat-val" style="color:#d97706" id="prWaitCount">0</div></div>
+          <div class="stat-box"><div class="stat-label">ออก PO แล้ว</div><div class="stat-val text-primary" id="prApprovedCount">0</div></div>
+          <div class="stat-box"><div class="stat-label">ตรวจรับแล้ว</div><div class="stat-val text-success" id="prReceivedCount">0</div></div>
+        </div>
+        <select id="filterPRStatus" class="select-box" onchange="renderProcure()" style="margin-bottom: 10px; padding:7px 10px; font-size:13px;">
+          <option value="all">สถานะทั้งหมด (PR / PO)</option>
+          <option value="pending">รออนุมัติ (Pending PR)</option>
+          <option value="approved">อนุมัติแล้ว / รอรับของ (PO)</option>
+          <option value="received">ตรวจรับเข้าโครงการแล้ว</option>
+        </select>
+        <div id="prList"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: INVENTORY & ASSETS (IC & FA) -->
+    <section id="tab-stock" class="tab-panel">
+      <div class="seg-tabs">
+        <button class="seg-btn active" id="segInvBtn" onclick="switchStockSub('inv')">📦 คลังวัสดุ (IC)</button>
+        <button class="seg-btn" id="segAssetBtn" onclick="switchStockSub('asset')">🚜 เครื่องจักร (FA)</button>
+      </div>
+
+      <!-- Inventory Subpanel -->
+      <div id="sub-inv">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📦 สต็อกวัสดุคงเหลือ</div>
+            <button class="btn btn-primary btn-sm" onclick="openInvModal()">+ เพิ่มวัสดุใหม่</button>
+          </div>
+          <div id="inventoryList"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">🔄 ประวัติรับเข้า-เบิกใช้ล่าสุด</div></div>
+          <div id="stockMoveList"></div>
+        </div>
+      </div>
+
+      <!-- Fixed Assets Subpanel -->
+      <div id="sub-asset" style="display:none;">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🚜 ทะเบียนเครื่องจักร/อุปกรณ์</div>
+            <button class="btn btn-primary btn-sm" onclick="openAssetModal()">+ เพิ่มเครื่องจักร</button>
+          </div>
+          <div id="assetList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: LABOR & ATTENDANCE -->
+    <section id="tab-labor" class="tab-panel">
+      <div class="card">
+        <div class="card-header" style="margin-bottom:6px;">
+          <div class="card-title">👷 คิดค่าแรงหน้างาน / OT</div>
+          <span class="badge-erp" style="font-size:11.5px; padding:3px 9px;" id="wageJobBadge">IJ001</span>
+        </div>
+        <p style="margin:0 0 12px; font-size:12px; color:var(--text-muted);">คำนวณค่าแรงประจำวัน + OT - หักเบิกล่วงหน้า และลงบัญชีเข้า Job Code อัตโนมัติ</p>
+
+        <div class="form-group">
+          <label class="form-label">กลุ่มช่าง / รายละเอียดงาน</label>
+          <input type="text" id="wageDesc" class="input-box" placeholder="เช่น ชุดช่างปูนเทพื้นชั้น 2" />
+        </div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">จำนวนคน (คน)</label><input type="number" inputmode="decimal" id="wageWorkers" class="input-box" value="4" oninput="calcWage()" /></div>
+          <div class="form-group"><label class="form-label">ค่าแรง/คน/วัน (฿)</label><input type="number" inputmode="decimal" id="wageRate" class="input-box" value="500" oninput="calcWage()" /></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">จำนวนวัน</label><input type="number" inputmode="decimal" id="wageDays" class="input-box" value="1" step="0.5" oninput="calcWage()" /></div>
+          <div class="form-group"><label class="form-label">OT (ชม./คน)</label><input type="number" inputmode="decimal" id="wageOtHours" class="input-box" value="2" step="0.5" oninput="calcWage()" /></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">อัตรา OT (฿/ชม.)</label><input type="number" inputmode="decimal" id="wageOtRate" class="input-box" value="75" oninput="calcWage()" /></div>
+          <div class="form-group"><label class="form-label">หักเบิกล่วงหน้า (฿)</label><input type="number" inputmode="decimal" id="wageAdvance" class="input-box" value="0" oninput="calcWage()" /></div>
+        </div>
+        <div class="grid-2">
+          <div class="form-group"><label class="form-label">วันที่</label><input type="date" id="wageDate" class="input-box" /></div>
+          <div class="form-group"><label class="form-label">หัวหน้าชุด / หมายเหตุ</label><input type="text" id="wageNote" class="input-box" placeholder="เช่น ช่างสมชาย" /></div>
+        </div>
+
+        <div class="calc-box">
+          <div class="calc-row"><span>ค่าแรงปกติ:</span><strong id="wageNormalTotal">฿2,000</strong></div>
+          <div class="calc-row"><span>ค่า OT รวม:</span><strong id="wageOtTotal">฿600</strong></div>
+          <div class="calc-row"><span>หักเบิกล่วงหน้า:</span><strong class="text-danger" id="wageAdvShow">-฿0</strong></div>
+          <div class="calc-total"><span>ยอดสุทธิต้องจ่าย:</span><span class="text-primary" style="font-size:18px" id="wageGrandTotal">฿2,600</span></div>
+        </div>
+
+        <button class="btn btn-dark btn-full" onclick="saveWageExpense()">ลงบัญชีค่าแรงเข้า <span id="wageBtnJobCode">IJ001</span></button>
+      </div>
+    </section>
+
+    <!-- TAB 5: FINANCE, BILLING & CLOUD SYNC -->
+    <section id="tab-finance" class="tab-panel">
+      <!-- Cloud Sync Banner Card -->
+      <div class="card" style="border: 1.5px solid #bae6fd; background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);">
+        <div class="card-header" style="margin-bottom: 6px;">
+          <div class="card-title">☁️ เชื่อมต่อทุกเครื่อง (Multi-Device Sync)</div>
+          <span class="badge" id="syncBadge" style="background:#e2e8f0; color:#475569;">Offline</span>
+        </div>
+        <p style="margin:0 0 10px; font-size:12px; color:#475569;">เชื่อมต่อฐานข้อมูลกลางฟรี (Firebase) เพื่อให้มือถือหน้างาน ออฟฟิศ และเจ้าของ เห็นข้อมูลเดียวกันแบบ Real-time</p>
+        <div class="grid-2">
+          <button class="btn btn-primary btn-sm" onclick="openSyncModal()">⚙️ ตั้งค่าเชื่อมต่อทีม</button>
+          <button class="btn btn-outline btn-sm" onclick="manualSyncNow()">🔄 ซิงค์ข้อมูลตอนนี้</button>
+        </div>
+      </div>
+
+      <!-- Billing / AR Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">💰 งวดงาน &amp; รายรับ (<span id="billJobCode">IJ001</span>)</div>
+          <button class="btn btn-success btn-sm" onclick="openBillingModal()">+ เพิ่มงวดงาน</button>
+        </div>
+        <div id="billingList"></div>
+      </div>
+
+      <!-- All Projects Financial Table -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📈 เปรียบเทียบกำไร/ขาดทุนทุกโครงการ</div>
+          <button class="btn btn-outline btn-sm" onclick="openJobModal()">+ เพิ่มงาน</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>รหัสงาน</th><th>งบสัญญา</th><th>รับเงินแล้ว</th><th>จ่ายแล้ว</th><th>คงเหลือ(งบ)</th></tr>
+            </thead>
+            <tbody id="summaryTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Export & Backup -->
+      <div class="card">
+        <div class="card-header"><div class="card-title">📤 ส่งออกรายงาน &amp; สำรองข้อมูล</div></div>
+        <div class="grid-2" style="margin-bottom:8px;">
+          <button class="btn btn-primary btn-sm" onclick="exportCSV(false)">CSV เฉพาะงานนี้</button>
+          <button class="btn btn-outline btn-sm" onclick="exportCSV(true)">CSV รวมทุกงาน</button>
+        </div>
+        <div class="grid-2">
+          <button class="btn btn-outline btn-sm" onclick="backupJSON()">สำรองข้อมูล (JSON)</button>
+          <label class="btn btn-outline btn-sm" style="margin:0;">
+            <span>กู้คืนข้อมูล</span>
+            <input type="file" accept=".json" onchange="restoreJSON(event)" style="display:none;" />
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 5-Module Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-tab="tab-dash" onclick="switchTab('tab-dash')">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      <span>ภาพรวม</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-procure" onclick="switchTab('tab-procure')">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+      <span>จัดซื้อ PR/PO</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-stock" onclick="switchTab('tab-stock')">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      <span>คลัง/เครื่องจักร</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-labor" onclick="switchTab('tab-labor')">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+      <span>ค่าแรง/OT</span>
+    </button>
+    <button class="nav-btn" data-tab="tab-finance" onclick="switchTab('tab-finance')">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span>การเงิน/ซิงค์</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MODALS -->
+<!-- Expense Modal -->
+<div id="expenseModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'expenseModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title" id="expenseModalTitle">ลงรายการค่าใช้จ่าย</h2><button class="close-btn" onclick="closeModal('expenseModal')">&times;</button></div>
+    <input type="hidden" id="editExpenseId" />
+    <div class="form-group"><label class="form-label">หมวดต้นทุน (Cost Code)</label><select id="expCategory" class="select-box"></select></div>
+    <div class="form-group"><label class="form-label">ชื่อรายการ</label><input type="text" id="expTitle" class="input-box" placeholder="เช่น ปูนซีเมนต์ 100 ถุง, ค่าเหมาช่างฝ้า" /></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">จำนวน</label><input type="number" inputmode="decimal" id="expQty" class="input-box" value="1" step="any" oninput="updateExpPreview()" /></div>
+      <div class="form-group"><label class="form-label">ราคา/หน่วย (฿)</label><input type="number" inputmode="decimal" id="expUnitPrice" class="input-box" placeholder="0" step="any" oninput="updateExpPreview()" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">วันที่</label><input type="date" id="expDate" class="input-box" /></div>
+      <div class="form-group"><label class="form-label">ร้านค้า / ผู้รับเหมา</label><input type="text" id="expVendor" class="input-box" placeholder="เช่น ร้านวัสดุก่อสร้าง" /></div>
+    </div>
+    <div class="calc-box" style="padding:10px;"><div class="calc-total" style="margin:0;padding:0;border:none;"><span>ยอดรวม:</span><span id="expTotalPreview" class="text-primary">฿0</span></div></div>
+    <button class="btn btn-primary btn-full" onclick="saveExpense()">บันทึกรายการ</button>
+  </div>
+</div>
+
+<!-- PR Modal -->
+<div id="prModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'prModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">สร้างใบขอซื้อ (PR)</h2><button class="close-btn" onclick="closeModal('prModal')">&times;</button></div>
+    <div class="form-group"><label class="form-label">หมวดค่าใช้จ่าย</label><select id="prCategory" class="select-box"></select></div>
+    <div class="form-group"><label class="form-label">รายการที่ขอซื้อ / จ้างเหมา</label><input type="text" id="prTitle" class="input-box" placeholder="เช่น เหล็กข้ออ้อย DB12 จำนวน 50 เส้น" /></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">จำนวน</label><input type="number" inputmode="decimal" id="prQty" class="input-box" value="1" step="any" oninput="updatePRPreview()" /></div>
+      <div class="form-group"><label class="form-label">ราคาประเมิน/หน่วย (฿)</label><input type="number" inputmode="decimal" id="prPrice" class="input-box" placeholder="0" step="any" oninput="updatePRPreview()" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">ร้านค้า/ซัพพลายเออร์</label><input type="text" id="prVendor" class="input-box" placeholder="เช่น ร้านเหล็กไทย" /></div>
+      <div class="form-group"><label class="form-label">ผู้ขอซื้อ</label><input type="text" id="prRequester" class="input-box" placeholder="เช่น วิศวกรเอ" /></div>
+    </div>
+    <div class="calc-box" style="padding:10px;"><div class="calc-total" style="margin:0;padding:0;border:none;"><span>ยอดขอซื้อรวม:</span><span id="prTotalPreview" class="text-primary">฿0</span></div></div>
+    <button class="btn btn-primary btn-full" onclick="savePR()">ส่งใบขอซื้อ (PR)</button>
+  </div>
+</div>
+
+<!-- Inventory Modal -->
+<div id="invModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'invModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">เพิ่มรายการวัสดุในคลัง (IC)</h2><button class="close-btn" onclick="closeModal('invModal')">&times;</button></div>
+    <div class="form-group"><label class="form-label">ชื่อวัสดุ</label><input type="text" id="invName" class="input-box" placeholder="เช่น ปูนเสือ, ท่อ PVC 2 นิ้ว" /></div>
+    <div class="grid-3">
+      <div class="form-group"><label class="form-label">จำนวนเริ่มต้น</label><input type="number" inputmode="decimal" id="invQty" class="input-box" value="0" /></div>
+      <div class="form-group"><label class="form-label">หน่วย</label><input type="text" id="invUnit" class="input-box" placeholder="ถุง/เส้น" /></div>
+      <div class="form-group"><label class="form-label">เตือนขั้นต่ำ</label><input type="number" inputmode="decimal" id="invMin" class="input-box" value="10" /></div>
+    </div>
+    <div class="form-group"><label class="form-label">ราคาประเมิน/หน่วย (฿)</label><input type="number" inputmode="decimal" id="invCost" class="input-box" value="0" /></div>
+    <button class="btn btn-primary btn-full" onclick="saveInventoryItem()">บันทึกวัสดุเข้าคลัง</button>
+  </div>
+</div>
+
+<!-- Stock Move Modal -->
+<div id="stockMoveModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'stockMoveModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title" id="stockMoveTitle">เบิก/รับวัสดุ</h2><button class="close-btn" onclick="closeModal('stockMoveModal')">&times;</button></div>
+    <input type="hidden" id="moveInvId" />
+    <input type="hidden" id="moveType" />
+    <div class="form-group"><label class="form-label">จำนวน</label><input type="number" inputmode="decimal" id="moveQty" class="input-box" value="1" min="0.1" step="any" /></div>
+    <div class="form-group"><label class="form-label">สำหรับรหัสงาน</label><select id="moveJobCode" class="select-box"></select></div>
+    <div class="form-group"><label class="form-label">ผู้เบิก / หมายเหตุ</label><input type="text" id="moveNote" class="input-box" placeholder="เช่น ช่างปูนเบิกใช้งานฐานราก" /></div>
+    <button class="btn btn-primary btn-full" onclick="confirmStockMove()">ยืนยันรายการ</button>
+  </div>
+</div>
+
+<!-- Asset Modal -->
+<div id="assetModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'assetModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">เพิ่ม/แก้ไขเครื่องจักร (FA)</h2><button class="close-btn" onclick="closeModal('assetModal')">&times;</button></div>
+    <input type="hidden" id="editAssetId" />
+    <div class="form-group"><label class="form-label">ชื่อเครื่องจักร / อุปกรณ์</label><input type="text" id="assetName" class="input-box" placeholder="เช่น รถแม็คโคร PC30, เครื่องตบดิน" /></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">รหัสทรัพย์สิน</label><input type="text" id="assetCode" class="input-box" placeholder="เช่น EQ-001" /></div>
+      <div class="form-group"><label class="form-label">ประจำอยู่ที่ไซต์งาน</label><select id="assetJob" class="select-box"></select></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">สถานะ</label>
+      <select id="assetStatus" class="select-box">
+        <option value="active">กำลังใช้งาน (Active)</option>
+        <option value="idle">ว่าง/สแตนด์บาย (Standby)</option>
+        <option value="repair">ซ่อมบำรุง (Maintenance)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="saveAsset()">บันทึกข้อมูลเครื่องจักร</button>
+  </div>
+</div>
+
+<!-- Billing Modal -->
+<div id="billingModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'billingModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">บันทึกงวดงาน / วางบิล (AR)</h2><button class="close-btn" onclick="closeModal('billingModal')">&times;</button></div>
+    <div class="form-group"><label class="form-label">ชื่องวดงาน</label><input type="text" id="billTitle" class="input-box" placeholder="เช่น งวดที่ 1 มัดจำสัญญา / เทฐานราก" /></div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">ยอดตามงวด (฿)</label><input type="number" inputmode="decimal" id="billAmount" class="input-box" placeholder="0" oninput="updateBillPreview()" /></div>
+      <div class="form-group"><label class="form-label">หัก Retention + WHT (฿)</label><input type="number" inputmode="decimal" id="billDeduct" class="input-box" value="0" oninput="updateBillPreview()" /></div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">วันที่</label><input type="date" id="billDate" class="input-box" /></div>
+      <div class="form-group"><label class="form-label">สถานะ</label>
+        <select id="billStatus" class="select-box"><option value="received">รับเงินแล้ว</option><option value="billed">วางบิลแล้ว (รอรับ)</option></select>
+      </div>
+    </div>
+    <div class="calc-box" style="padding:10px;"><div class="calc-total" style="margin:0;padding:0;border:none;"><span>ยอดเงินสุทธิที่ได้รับ:</span><span id="billNetPreview" class="text-success">฿0</span></div></div>
+    <button class="btn btn-success btn-full" onclick="saveBilling()">บันทึกงวดงาน</button>
+  </div>
+</div>
+
+<!-- Job Switcher Modal -->
+<div id="jobSwitcherModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'jobSwitcherModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">เลือกรหัสงาน / โครงการ</h2><button class="close-btn" onclick="closeModal('jobSwitcherModal')">&times;</button></div>
+    <div id="jobSwitcherList"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:8px;" onclick="closeModal('jobSwitcherModal'); openJobModal();">+ เพิ่มโครงการใหม่</button>
+  </div>
+</div>
+
+<!-- Job Add/Edit Modal -->
+<div id="jobModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'jobModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title" id="jobModalTitle">เพิ่มรหัสงานใหม่</h2><button class="close-btn" onclick="closeModal('jobModal')">&times;</button></div>
+    <input type="hidden" id="editJobOriginalCode" />
+    <div class="grid-2">
+      <div class="form-group"><label class="form-label">รหัสงาน (Job Code)</label><input type="text" id="jobCodeInput" class="input-box" placeholder="IJ002" style="text-transform:uppercase;" /></div>
+      <div class="form-group"><label class="form-label">ความคืบหน้า (%)</label><input type="number" inputmode="decimal" id="jobProgressInput" class="input-box" value="0" min="0" max="100" /></div>
+    </div>
+    <div class="form-group"><label class="form-label">ชื่อโครงการ</label><input type="text" id="jobNameInput" class="input-box" placeholder="เช่น งานก่อสร้างโกดัง B" /></div>
+    <div class="form-group"><label class="form-label">งบประมาณสัญญา (บาท)</label><input type="number" inputmode="decimal" id="jobBudgetInput" class="input-box" placeholder="1500000" /></div>
+    <div style="display:flex; gap:8px;">
+      <button id="deleteJobBtn" class="btn btn-danger-soft" style="display:none;" onclick="deleteCurrentEditingJob()">ลบงาน</button>
+      <button class="btn btn-primary" style="flex:1;" onclick="saveJob()">บันทึกรหัสงาน</button>
+    </div>
+  </div>
+</div>
+
+<!-- Role Switch Modal -->
+<div id="roleModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'roleModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">สลับบทบาทผู้ใช้งาน (Role)</h2><button class="close-btn" onclick="closeModal('roleModal')">&times;</button></div>
+    <p style="font-size:12.5px; color:#64748b; margin-top:0;">สิทธิ์ <b>Admin/PM</b> สามารถกดอนุมัติ PO และลบงานได้ (PIN เริ่มต้น: <b>1234</b>)</p>
+    <div class="form-group"><label class="form-label">รหัส PIN สำหรับสลับเป็น Admin</label><input type="password" inputmode="numeric" id="pinInput" class="input-box" placeholder="กรอก PIN (ค่าเริ่มต้น 1234)" /></div>
+    <div class="grid-2" style="margin-bottom:10px;">
+      <button class="btn btn-dark" onclick="setRole('admin')">เข้าโหมด Admin / PM</button>
+      <button class="btn btn-outline" onclick="setRole('site')">เข้าโหมด หน้างาน (Site)</button>
+    </div>
+    <div class="form-group" style="border-top:1px dashed #e2e8f0; padding-top:10px;">
+      <label class="form-label">เปลี่ยนรหัส PIN ใหม่ (เฉพาะเมื่อเป็น Admin)</label>
+      <div style="display:flex; gap:6px;">
+        <input type="text" inputmode="numeric" id="newPinInput" class="input-box" placeholder="PIN ใหม่ 4 หลัก" />
+        <button class="btn btn-primary btn-sm" onclick="changeAdminPin()">บันทึก PIN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Cloud Sync Modal -->
+<div id="syncModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'syncModal')">
+  <div class="modal-sheet">
+    <div class="modal-header"><h2 class="modal-title">☁️ ตั้งค่าซิงค์ข้อมูลทุกเครื่อง</h2><button class="close-btn" onclick="closeModal('syncModal')">&times;</button></div>
+    <p style="font-size:12px; color:#475569; margin-top:0;">นำ URL จาก <b>Firebase Realtime Database</b> และตั้ง <b>รหัสบริษัท (Workspace ID)</b> เดียวกันในทุกเครื่อง</p>
+    <div class="form-group">
+      <label class="form-label">Firebase Database URL</label>
+      <input type="url" id="syncDbUrl" class="input-box" placeholder="https://xxx-default-rtdb.asia-southeast1.firebasedatabase.app" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">รหัสทีม / บริษัท (ตั้งเหมือนกันทุกเครื่อง)</label>
+      <input type="text" id="syncWorkspace" class="input-box" placeholder="เช่น SAR-2026-TEAM" />
+    </div>
+    <div class="grid-2" style="margin-bottom:8px;">
+      <button class="btn btn-primary" onclick="connectCloud('push')">เชื่อมต่อ + ส่งข้อมูลเครื่องนี้ขึ้น</button>
+      <button class="btn btn-success" onclick="connectCloud('pull')">เชื่อมต่อ + ดึงข้อมูลจากทีม</button>
+    </div>
+    <button class="btn btn-danger-soft btn-full btn-sm" onclick="disconnectCloud()">ตัดการเชื่อมต่อ (ใช้เฉพาะเครื่องนี้)</button>
+  </div>
+</div>
+
+<!-- Print PO Modal -->
+<div id="poPrintModal" class="modal-backdrop" onclick="closeOnBackdrop(event,'poPrintModal')">
+  <div class="modal-sheet">
+    <div class="modal-header no-print"><h2 class="modal-title">ใบสั่งซื้อ (Purchase Order)</h2><button class="close-btn" onclick="closeModal('poPrintModal')">&times;</button></div>
+    <div id="poDocumentContent" style="border:1px solid #cbd5e1; border-radius:12px; padding:14px; font-size:13px;"></div>
+    <button class="btn btn-primary btn-full no-print" style="margin-top:12px;" onclick="window.print()">🖨️ พิมพ์ / บันทึกเป็น PDF</button>
+  </div>
+</div>
+
+<div id="toast" class="toast">บันทึกแล้ว</div>
+
+<script>
+const STORAGE_KEY = "sitecost_erp_v2";
+const SYNC_CFG_KEY = "sitecost_erp_sync_v2";
+const ROLE_KEY = "sitecost_erp_role_v2";
+
+const CATEGORIES = [
+  { id: "labor", name: "ค่าแรงงาน", color: "#f59e0b", bg: "#fef3c7" },
+  { id: "material", name: "วัสดุก่อสร้าง", color: "#0284c7", bg: "#e0f2fe" },
+  { id: "subcon", name: "ผู้รับเหมาช่วง", color: "#ec4899", bg: "#fce7f3" },
+  { id: "machine", name: "เครื่องจักร/อุปกรณ์", color: "#8b5cf6", bg: "#ede9fe" },
+  { id: "transport", name: "ขนส่ง/เดินทาง", color: "#10b981", bg: "#d1fae5" },
+  { id: "other", name: "อื่นๆ", color: "#64748b", bg: "#f1f5f9" }
+];
+
+const DEFAULT_DATA = {
+  meta: { adminPin: "1234", activeJobCode: "IJ001" },
+  jobs: [
+    { id: "IJ001", code: "IJ001", name: "งานโครงสร้างอาคาร A", budget: 1500000, progress: 35 },
+    { id: "IK001", code: "IK001", name: "งานระบบไฟฟ้า-ประปา", budget: 450000, progress: 20 }
+  ],
+  expenses: [
+    { id: "exp_1", jobCode: "IJ001", category: "labor", title: "ค่าแรงเทคอนกรีตฐานราก", date: "2026-11-02", vendor: "หัวหน้างาน", qty: 6, unitPrice: 500, total: 3000 },
+    { id: "exp_2", jobCode: "IJ001", category: "material", title: "ปูนซีเมนต์ 100 ถุง", date: "2026-11-01", vendor: "ช่างเสือ", qty: 100, unitPrice: 140, total: 14000 }
+  ],
+  prs: [
+    { id: "pr_1", poNo: "", jobCode: "IJ001", category: "material", title: "เหล็กข้ออ้อย DB12 (50 เส้น)", qty: 50, unitPrice: 240, total: 12000, vendor: "ร้านเหล็กไทย", requester: "วิศวกรหน้างาน", date: "2026-11-15", status: "pending" }
+  ],
+  inventory: [
+    { id: "inv_1", name: "ปูนซีเมนต์ปอร์ตแลนด์", qty: 45, unit: "ถุง", minQty: 20, unitCost: 140 },
+    { id: "inv_2", name: "ท่อ PVC 2 นิ้ว ชั้น 8.5", qty: 8, unit: "เส้น", minQty: 15, unitCost: 120 }
+  ],
+  stockMoves: [],
+  assets: [
+    { id: "ast_1", code: "EQ-001", name: "รถแม็คโครเล็ก PC30", jobCode: "IJ001", status: "active" },
+    { id: "ast_2", code: "EQ-002", name: "เครื่องตบดิน", jobCode: "IK001", status: "idle" }
+  ],
+  billings: [
+    { id: "bill_1", jobCode: "IJ001", title: "งวดที่ 1 มัดจำทำสัญญา", amount: 300000, deduct: 9000, net: 291000, date: "2026-11-01", status: "received" }
+  ]
+};
+
+let state = loadLocalState();
+let syncConfig = loadSyncConfig();
+let currentRole = localStorage.getItem(ROLE_KEY) || "admin";
+let eventSource = null;
+let selectedDonutCategory = null;
+
+function loadLocalState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      if (p && p.jobs) return normalizeState(p);
+    }
+  } catch (e) {}
+  return normalizeState(JSON.parse(JSON.stringify(DEFAULT_DATA)));
+}
+
+function normalizeState(d) {
+  return {
+    meta: d.meta || { adminPin: "1234", activeJobCode: "IJ001" },
+    jobs: toArray(d.jobs),
+    expenses: toArray(d.expenses),
+    prs: toArray(d.prs),
+    inventory: toArray(d.inventory),
+    stockMoves: toArray(d.stockMoves),
+    assets: toArray(d.assets),
+    billings: toArray(d.billings)
+  };
+}
+
+function toArray(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.filter(Boolean);
+  return Object.values(val).filter(Boolean);
+}
+
+function loadSyncConfig() {
+  try { return JSON.parse(localStorage.getItem(SYNC_CFG_KEY) || "{}"); } catch (e) { return {}; }
+}
+
+function saveLocalOnly() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(window.__tt);
+  window.__tt = setTimeout(() => el.classList.remove("show"), 2300);
+}
+
+/* Cloud Sync Engine (Firebase RTDB REST + SSE) */
+function isCloudActive() {
+  return Boolean(syncConfig && syncConfig.dbUrl && syncConfig.workspace);
+}
+
+function cloudBaseUrl() {
+  const cleanUrl = syncConfig.dbUrl.replace(/\/+$/, "");
+  const ws = encodeURIComponent(syncConfig.workspace.trim());
+  return `${cleanUrl}/erp_workspaces/${ws}`;
+}
+
+async function syncWrite(collection, id, obj) {
+  saveLocalOnly();
+  if (!isCloudActive()) return;
+  try {
+    const url = id ? `${cloudBaseUrl()}/${collection}/${id}.json` : `${cloudBaseUrl()}/${collection}.json`;
+    await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(obj) });
+  } catch (e) { showToast("ซิงค์ไม่สำเร็จ (บันทึกในเครื่องแล้ว)"); }
+}
+
+async function syncDelete(collection, id) {
+  saveLocalOnly();
+  if (!isCloudActive()) return;
+  try {
+    await fetch(`${cloudBaseUrl()}/${collection}/${id}.json`, { method: "DELETE" });
+  } catch (e) {}
+}
+
+function startRealtimeListener() {
+  if (eventSource) { eventSource.close(); eventSource = null; }
+  updateSyncUI();
+  if (!isCloudActive()) return;
+
+  try {
+    eventSource = new EventSource(`${cloudBaseUrl()}.json`);
+    eventSource.addEventListener("put", (ev) => {
+      const payload = JSON.parse(ev.data);
+      applyRealtimePatch(payload.path, payload.data);
+    });
+    eventSource.addEventListener("patch", (ev) => {
+      const payload = JSON.parse(ev.data);
+      applyRealtimePatch(payload.path, payload.data);
+    });
+    eventSource.onopen = () => updateSyncUI(true);
+    eventSource.onerror = () => updateSyncUI(false);
+  } catch (e) { updateSyncUI(false); }
+}
+
+function applyRealtimePatch(path, data) {
+  if (path === "/") {
+    if (data && data.jobs) {
+      const prevActive = state.meta.activeJobCode;
+      state = normalizeState(data);
+      if (prevActive && state.jobs.some(j => j.code === prevActive)) state.meta.activeJobCode = prevActive;
+      saveLocalOnly();
+      renderAll();
+    }
+    return;
+  }
+  const parts = path.split("/").filter(Boolean);
+  if (parts.length === 1) {
+    const col = parts[0];
+    if (col === "meta") state.meta = data || state.meta;
+    else if (Array.isArray(state[col])) state[col] = toArray(data);
+  } else if (parts.length === 2) {
+    const [col, id] = parts;
+    if (col === "meta") {
+      state.meta[id] = data;
+    } else if (Array.isArray(state[col])) {
+      if (data === null) {
+        state[col] = state[col].filter(x => x.id !== id && x.code !== id);
+      } else {
+        const idx = state[col].findIndex(x => x.id === id || x.code === id);
+        if (idx >= 0) state[col][idx] = data; else state[col].push(data);
+      }
+    }
+  }
+  saveLocalOnly();
+  renderAll();
+}
+
+async function connectCloud(mode) {
+  const dbUrl = document.getElementById("syncDbUrl").value.trim().replace(/\/+$/, "");
+  const workspace = document.getElementById("syncWorkspace").value.trim();
+  if (!dbUrl.startsWith("https://") || !workspace) {
+    showToast("กรุณากรอก Firebase URL และรหัสทีมให้ถูกต้อง"); return;
+  }
+  syncConfig = { dbUrl, workspace };
+  localStorage.setItem(SYNC_CFG_KEY, JSON.stringify(syncConfig));
+
+  try {
+    if (mode === "push") {
+      const payload = {
+        meta: state.meta,
+        jobs: arrToObj(state.jobs, "code"),
+        expenses: arrToObj(state.expenses, "id"),
+        prs: arrToObj(state.prs, "id"),
+        inventory: arrToObj(state.inventory, "id"),
+        stockMoves: arrToObj(state.stockMoves, "id"),
+        assets: arrToObj(state.assets, "id"),
+        billings: arrToObj(state.billings, "id")
+      };
+      const res = await fetch(`${cloudBaseUrl()}.json`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error("Upload failed");
+      showToast("เชื่อมต่อและส่งข้อมูลขึ้นทีมแล้ว!");
+    } else {
+      const res = await fetch(`${cloudBaseUrl()}.json`);
+      if (!res.ok) throw new Error("Fetch failed");
+      const data = await res.json();
+      if (data && data.jobs) {
+        state = normalizeState(data);
+        saveLocalOnly();
+        showToast("ดึงข้อมูลทีมเรียบร้อย!");
+      } else {
+        showToast("เชื่อมต่อแล้ว (ยังไม่มีข้อมูลในรหัสทีมนี้)");
+      }
+    }
+    closeModal("syncModal");
+    startRealtimeListener();
+    renderAll();
+  } catch (e) {
+    showToast("เชื่อมต่อไม่สำเร็จ ตรวจสอบ URL หรือ Rules ของ Firebase");
+  }
+}
+
+async function manualSyncNow() {
+  if (!isCloudActive()) { openSyncModal(); return; }
+  try {
+    const res = await fetch(`${cloudBaseUrl()}.json`);
+    const data = await res.json();
+    if (data && data.jobs) {
+      state = normalizeState(data);
+      saveLocalOnly();
+      renderAll();
+      showToast("ซิงค์ข้อมูลล่าสุดแล้ว ✓");
+    }
+  } catch (e) { showToast("ไม่สามารถดึงข้อมูลได้"); }
+}
+
+function disconnectCloud() {
+  if (eventSource) { eventSource.close(); eventSource = null; }
+  syncConfig = {};
+  localStorage.removeItem(SYNC_CFG_KEY);
+  closeModal("syncModal");
+  updateSyncUI();
+  showToast("ตัดการเชื่อมต่อ Cloud แล้ว");
+}
+
+function arrToObj(arr, key) {
+  const o = {};
+  arr.forEach(item => { o[item[key]] = item; });
+  return o;
+}
+
+function updateSyncUI(connected = false) {
+  const pill = document.getElementById("syncPill");
+  const txt = document.getElementById("syncStatusText");
+  const badge = document.getElementById("syncBadge");
+  if (!isCloudActive()) {
+    pill.classList.remove("online");
+    txt.textContent = "Offline (เฉพาะเครื่องนี้)";
+    badge.textContent = "Offline"; badge.style.background = "#e2e8f0"; badge.style.color = "#475569";
+  } else {
+    pill.classList.add("online");
+    txt.textContent = connected ? `Live: ${syncConfig.workspace}` : `Sync: ${syncConfig.workspace}`;
+    badge.textContent = "Live Sync"; badge.style.background = "#d1fae5"; badge.style.color = "#047857";
+  }
+}
+
+/* Helpers */
+function todayISO() {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+}
+function formatBaht(n) { return "฿" + Number(n || 0).toLocaleString("th-TH", { maximumFractionDigits: 2 }); }
+function esc(s) { return String(s || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+function getActiveJob() {
+  let j = state.jobs.find(x => x.code === state.meta.activeJobCode);
+  if (!j && state.jobs.length) { j = state.jobs[0]; state.meta.activeJobCode = j.code; }
+  return j || { code: "-", name: "ไม่มีโครงการ", budget: 0, progress: 0 };
+}
+function getCat(id) { return CATEGORIES.find(c => c.id === id) || CATEGORIES[5]; }
+
+/* Tabs & Role */
+function switchTab(id) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  renderAll();
+}
+
+function switchStockSub(sub) {
+  document.getElementById("sub-inv").style.display = sub === "inv" ? "block" : "none";
+  document.getElementById("sub-asset").style.display = sub === "asset" ? "block" : "none";
+  document.getElementById("segInvBtn").classList.toggle("active", sub === "inv");
+  document.getElementById("segAssetBtn").classList.toggle("active", sub === "asset");
+}
+
+function toggleRoleModal() {
+  document.getElementById("pinInput").value = "";
+  document.getElementById("roleModal").classList.add("open");
+}
+
+function setRole(role) {
+  if (role === "admin") {
+    const pin = document.getElementById("pinInput").value.trim();
+    if (pin !== (state.meta.adminPin || "1234")) { showToast("รหัส PIN ไม่ถูกต้อง"); return; }
+  }
+  currentRole = role;
+  localStorage.setItem(ROLE_KEY, role);
+  closeModal("roleModal");
+  renderAll();
+  showToast(role === "admin" ? "เข้าสู่โหมด Admin / PM แล้ว" : "สลับเป็นโหมด หน้างาน (Site)");
+}
+
+function changeAdminPin() {
+  if (currentRole !== "admin") { showToast("ต้องอยู่ในโหมด Admin ก่อนเปลี่ยน PIN"); return; }
+  const np = document.getElementById("newPinInput").value.trim();
+  if (np.length < 4) { showToast("กรุณาตั้ง PIN อย่างน้อย 4 หลัก"); return; }
+  state.meta.adminPin = np;
+  syncWrite("meta", "adminPin", np);
+  document.getElementById("newPinInput").value = "";
+  showToast("เปลี่ยนรหัส PIN สำเร็จ");
+}
+
+function initUI() {
+  const catOpts = CATEGORIES.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+  document.getElementById("filterCategory").innerHTML = `<option value="all">ทุกหมวด</option>` + catOpts;
+  document.getElementById("expCategory").innerHTML = catOpts;
+  document.getElementById("prCategory").innerHTML = catOpts;
+  document.getElementById("wageDate").value = todayISO();
+  document.getElementById("billDate").value = todayISO();
+}
+
+function renderAll() {
+  const job = getActiveJob();
+  document.getElementById("roleLabel").textContent = currentRole === "admin" ? "Admin" : "Site";
+  document.getElementById("headerJobCode").textContent = job.code;
+  document.getElementById("headerJobFull").textContent = `${job.code} - ${job.name} (คืบหน้า ${job.progress || 0}%)`;
+  document.getElementById("dashJobCode").textContent = job.code;
+  document.getElementById("wageJobBadge").textContent = job.code;
+  document.getElementById("wageBtnJobCode").textContent = job.code;
+  document.getElementById("billJobCode").textContent = job.code;
+
+  renderDash();
+  renderProcure();
+  renderStockAndAssets();
+  renderFinance();
+  calcWage();
+}
+
+/* TAB 1: DASHBOARD */
+function renderDash() {
+  const totalInc = state.billings.filter(b => b.status === "received").reduce((s, b) => s + Number(b.net || 0), 0);
+  const totalCost = state.expenses.reduce((s, e) => s + Number(e.total || 0), 0);
+  document.getElementById("totalProjectBadge").textContent = `${state.jobs.length} โครงการ`;
+  document.getElementById("compIncome").textContent = formatBaht(totalInc);
+  document.getElementById("compCost").textContent = formatBaht(totalCost);
+  const profit = totalInc - totalCost;
+  const pEl = document.getElementById("compProfit");
+  pEl.textContent = formatBaht(profit);
+  pEl.className = "stat-val " + (profit < 0 ? "text-danger" : "text-success");
+
+  const job = getActiveJob();
+  const jobExps = state.expenses.filter(e => e.jobCode === job.code);
+  const spent = jobExps.reduce((s, e) => s + Number(e.total || 0), 0);
+  const remain = Number(job.budget || 0) - spent;
+  const pct = job.budget > 0 ? Math.min(100, Math.round((spent / job.budget) * 100)) : 0;
+
+  document.getElementById("statBudget").textContent = formatBaht(job.budget);
+  document.getElementById("statSpent").textContent = formatBaht(spent);
+  const rEl = document.getElementById("statRemain");
+  rEl.textContent = formatBaht(remain);
+  rEl.className = "stat-val " + (remain < 0 ? "text-danger" : "text-success");
+  const bar = document.getElementById("budgetProgressBar");
+  bar.style.width = pct + "%";
+  bar.className = "progress-bar" + (pct >= 90 ? " danger" : pct >= 70 ? " warn" : "");
+  document.getElementById("budgetPctText").textContent = `ใช้ไป ${job.budget > 0 ? Math.round((spent / job.budget) * 100) : 0}% ของงบ`;
+  document.getElementById("jobProgressText").textContent = `คืบหน้างาน: ${job.progress || 0}%`;
+
+  renderDonut(jobExps, spent);
+
+  const fCat = document.getElementById("filterCategory").value;
+  const q = document.getElementById("searchExpense").value.trim().toLowerCase();
+  const list = jobExps
+    .filter(e => fCat === "all" || e.category === fCat)
+    .filter(e => !q || e.title.toLowerCase().includes(q) || (e.vendor || "").toLowerCase().includes(q))
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+  document.getElementById("expenseCount").textContent = list.length;
+  const el = document.getElementById("expenseList");
+  if (!list.length) { el.innerHTML = `<div class="empty-state">ยังไม่มีรายการค่าใช้จ่าย</div>`; return; }
+
+  el.innerHTML = list.map(e => {
+    const c = getCat(e.category);
+    return `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title"><span style="color:${c.color};">●</span> ${esc(e.title)}</div>
+          <div class="item-meta">${esc(e.date)} • ${esc(e.vendor || c.name)} (${e.qty} x ${formatBaht(e.unitPrice)})</div>
+        </div>
+        <div class="item-right">
+          <strong style="font-size:13.5px;">${formatBaht(e.total)}</strong>
+          <button class="icon-btn" onclick="openExpenseModal('${e.id}')">✏️</button>
+          ${currentRole === "admin" ? `<button class="icon-btn del" onclick="deleteExpense('${e.id}')">🗑️</button>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function renderDonut(jobExps, total) {
+  const sums = {};
+  CATEGORIES.forEach(c => sums[c.id] = 0);
+  jobExps.forEach(e => sums[e.category] = (sums[e.category] || 0) + Number(e.total || 0));
+
+  const r = 44, circ = 2 * Math.PI * r;
+  let offset = 0;
+  const svg = document.getElementById("donutSvg");
+  if (total <= 0) {
+    svg.innerHTML = `<circle cx="60" cy="60" r="${r}" fill="none" stroke="#e2e8f0" stroke-width="20"></circle>`;
+  } else {
+    svg.innerHTML = CATEGORIES.map(c => {
+      const v = sums[c.id]; if (v <= 0) return "";
+      const len = (v / total) * circ;
+      const sel = selectedDonutCategory === c.id;
+      const s = `<circle class="donut-slice" cx="60" cy="60" r="${r}" fill="none" stroke="${c.color}" stroke-width="${sel ? 24 : 20}" stroke-dasharray="${Math.max(0, len - 1.5)} ${circ}" stroke-dashoffset="${-offset}" onclick="selectDonut('${c.id}')" />`;
+      offset += len; return s;
+    }).join("");
+  }
+
+  if (selectedDonutCategory) {
+    const c = getCat(selectedDonutCategory), v = sums[c.id];
+    document.getElementById("donutLabel").textContent = c.name;
+    document.getElementById("donutVal").textContent = formatBaht(v);
+    document.getElementById("donutPct").textContent = (total > 0 ? Math.round(v / total * 100) : 0) + "%";
+  } else {
+    document.getElementById("donutLabel").textContent = "รวมทั้งหมด";
+    document.getElementById("donutVal").textContent = formatBaht(total);
+    document.getElementById("donutPct").textContent = total > 0 ? "100%" : "0%";
+  }
+
+  document.getElementById("legendList").innerHTML = CATEGORIES.map(c => `
+    <div class="legend-item ${selectedDonutCategory === c.id ? "active" : ""}" onclick="selectDonut('${c.id}')">
+      <div class="legend-left"><span class="legend-dot" style="background:${c.color}"></span><span class="legend-name">${c.name}</span></div>
+      <span class="legend-val">${sums[c.id] > 0 ? formatBaht(sums[c.id]) : "-"}</span>
+    </div>`).join("");
+}
+function selectDonut(id) { selectedDonutCategory = selectedDonutCategory === id ? null : id; renderDash(); }
+
+/* Expense CRUD */
+function openExpenseModal(id = null) {
+  document.getElementById("editExpenseId").value = id || "";
+  if (id) {
+    const e = state.expenses.find(x => x.id === id); if (!e) return;
+    document.getElementById("expenseModalTitle").textContent = "แก้ไขค่าใช้จ่าย";
+    document.getElementById("expCategory").value = e.category;
+    document.getElementById("expTitle").value = e.title;
+    document.getElementById("expQty").value = e.qty;
+    document.getElementById("expUnitPrice").value = e.unitPrice;
+    document.getElementById("expDate").value = e.date;
+    document.getElementById("expVendor").value = e.vendor || "";
+  } else {
+    document.getElementById("expenseModalTitle").textContent = "ลงรายการค่าใช้จ่าย";
+    document.getElementById("expTitle").value = "";
+    document.getElementById("expQty").value = 1;
+    document.getElementById("expUnitPrice").value = "";
+    document.getElementById("expDate").value = todayISO();
+    document.getElementById("expVendor").value = "";
+  }
+  updateExpPreview();
+  document.getElementById("expenseModal").classList.add("open");
+}
+function updateExpPreview() {
+  const t = Number(document.getElementById("expQty").value || 0) * Number(document.getElementById("expUnitPrice").value || 0);
+  document.getElementById("expTotalPreview").textContent = formatBaht(t);
+}
+function saveExpense() {
+  const editId = document.getElementById("editExpenseId").value;
+  const item = {
+    id: editId || "exp_" + Date.now(),
+    jobCode: getActiveJob().code,
+    category: document.getElementById("expCategory").value,
+    title: document.getElementById("expTitle").value.trim(),
+    qty: Number(document.getElementById("expQty").value || 0),
+    unitPrice: Number(document.getElementById("expUnitPrice").value || 0),
+    date: document.getElementById("expDate").value || todayISO(),
+    vendor: document.getElementById("expVendor").value.trim()
+  };
+  item.total = Math.round(item.qty * item.unitPrice * 100) / 100;
+  if (!item.title || item.total <= 0) { showToast("กรุณากรอกข้อมูลและราคาให้ครบ"); return; }
+  if (editId) {
+    const i = state.expenses.findIndex(x => x.id === editId);
+    if (i >= 0) state.expenses[i] = item;
+  } else {
+    state.expenses.push(item);
+  }
+  syncWrite("expenses", item.id, item);
+  closeModal("expenseModal"); renderAll(); showToast("บันทึกค่าใช้จ่ายแล้ว ✓");
+}
+function deleteExpense(id) {
+  if (!confirm("ลบรายการค่าใช้จ่ายนี้?")) return;
+  state.expenses = state.expenses.filter(x => x.id !== id);
+  syncDelete("expenses", id); renderAll(); showToast("ลบรายการแล้ว");
+}
+
+/* TAB 2: PROCUREMENT (PR -> PO -> RECEIVE) */
+function renderProcure() {
+  const job = getActiveJob();
+  const jobPrs = state.prs.filter(p => p.jobCode === job.code);
+  document.getElementById("prWaitCount").textContent = jobPrs.filter(p => p.status === "pending").length;
+  document.getElementById("prApprovedCount").textContent = jobPrs.filter(p => p.status === "approved").length;
+  document.getElementById("prReceivedCount").textContent = jobPrs.filter(p => p.status === "received").length;
+
+  const fStatus = document.getElementById("filterPRStatus").value;
+  const list = jobPrs.filter(p => fStatus === "all" || p.status === fStatus).sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+  const el = document.getElementById("prList");
+  if (!list.length) { el.innerHTML = `<div class="empty-state">ยังไม่มีใบขอซื้อ (PR) ในโครงการ ${job.code}</div>`; return; }
+
+  const statusLabels = { pending: ["รออนุมัติ PR", "badge-pending"], approved: ["ออก PO แล้ว", "badge-approved"], received: ["รับของ+ลงบัญชีแล้ว", "badge-received"], rejected: ["ไม่อนุมัติ", "badge-rejected"] };
+  el.innerHTML = list.map(pr => {
+    const [stTxt, stCls] = statusLabels[pr.status] || statusLabels.pending;
+    return `
+      <div class="pr-card">
+        <div style="display:flex; justify-content:space-between; align-items:start; gap:8px;">
+          <div>
+            <div style="font-weight:800; font-size:14px;">${esc(pr.title)}</div>
+            <div style="font-size:11.5px; color:#64748b; margin-top:2px;">
+              ${pr.poNo ? `<b>${esc(pr.poNo)}</b> • ` : ""}${esc(pr.date)} • ขอโดย: ${esc(pr.requester || "-")} • ร้าน: ${esc(pr.vendor || "-")}
+            </div>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-weight:800; color:var(--primary);">${formatBaht(pr.total)}</div>
+            <span class="badge ${stCls}">${stTxt}</span>
+          </div>
+        </div>
+        <div class="pr-actions">
+          ${pr.status === "pending" && currentRole === "admin" ? `
+            <button class="btn btn-success btn-sm" onclick="approvePR('${pr.id}')">✓ อนุมัติ &amp; ออก PO</button>
+            <button class="btn btn-danger-soft btn-sm" onclick="rejectPR('${pr.id}')">✕ ไม่อนุมัติ</button>` : ""}
+          ${pr.status === "approved" ? `
+            <button class="btn btn-primary btn-sm" onclick="receivePO('${pr.id}')">📦 ตรวจรับของ + ลงต้นทุน</button>
+            <button class="btn btn-outline btn-sm" onclick="printPO('${pr.id}')">🖨️ ดู/พิมพ์ PO</button>` : ""}
+          ${pr.status === "received" ? `<button class="btn btn-outline btn-sm" onclick="printPO('${pr.id}')">🖨️ ใบ PO (${esc(pr.poNo)})</button>` : ""}
+          ${currentRole === "admin" ? `<button class="btn btn-outline btn-sm" onclick="deletePR('${pr.id}')" style="margin-left:auto; color:#ef4444;">ลบ</button>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+}
+
+function openPRModal() {
+  document.getElementById("prTitle").value = "";
+  document.getElementById("prQty").value = 1;
+  document.getElementById("prPrice").value = "";
+  document.getElementById("prVendor").value = "";
+  document.getElementById("prRequester").value = currentRole === "admin" ? "ผู้จัดการโครงการ" : "หัวหน้างาน";
+  updatePRPreview();
+  document.getElementById("prModal").classList.add("open");
+}
+function updatePRPreview() {
+  const t = Number(document.getElementById("prQty").value || 0) * Number(document.getElementById("prPrice").value || 0);
+  document.getElementById("prTotalPreview").textContent = formatBaht(t);
+}
+function savePR() {
+  const qty = Number(document.getElementById("prQty").value || 0);
+  const unitPrice = Number(document.getElementById("prPrice").value || 0);
+  const pr = {
+    id: "pr_" + Date.now(),
+    poNo: "",
+    jobCode: getActiveJob().code,
+    category: document.getElementById("prCategory").value,
+    title: document.getElementById("prTitle").value.trim(),
+    qty, unitPrice, total: Math.round(qty * unitPrice * 100) / 100,
+    vendor: document.getElementById("prVendor").value.trim(),
+    requester: document.getElementById("prRequester").value.trim(),
+    date: todayISO(),
+    status: "pending"
+  };
+  if (!pr.title || pr.total <= 0) { showToast("กรุณากรอกรายการและราคาประเมิน"); return; }
+  state.prs.push(pr);
+  syncWrite("prs", pr.id, pr);
+  closeModal("prModal"); renderProcure(); showToast("ส่งใบขอซื้อ (PR) แล้ว");
+}
+function approvePR(id) {
+  const pr = state.prs.find(x => x.id === id); if (!pr) return;
+  pr.status = "approved";
+  pr.poNo = "PO-" + todayISO().replace(/-/g, "").slice(2) + "-" + String(Math.floor(100 + Math.random() * 900));
+  syncWrite("prs", pr.id, pr); renderProcure(); showToast(`อนุมัติออก ${pr.poNo} แล้ว`);
+}
+function rejectPR(id) {
+  const pr = state.prs.find(x => x.id === id); if (!pr) return;
+  pr.status = "rejected";
+  syncWrite("prs", pr.id, pr); renderProcure(); showToast("ปฏิเสธใบขอซื้อแล้ว");
+}
+function receivePO(id) {
+  const pr = state.prs.find(x => x.id === id); if (!pr) return;
+  pr.status = "received";
+  const exp = {
+    id: "exp_" + Date.now(),
+    jobCode: pr.jobCode,
+    category: pr.category,
+    title: `[${pr.poNo}] ${pr.title}`,
+    qty: pr.qty, unitPrice: pr.unitPrice, total: pr.total,
+    date: todayISO(), vendor: pr.vendor || "จากใบ PO"
+  };
+  state.expenses.push(exp);
+  syncWrite("prs", pr.id, pr);
+  syncWrite("expenses", exp.id, exp);
+  renderAll(); showToast("ตรวจรับของและลงบัญชีต้นทุนโครงการแล้ว ✓");
+}
+function deletePR(id) {
+  if (!confirm("ลบเอกสาร PR/PO นี้?")) return;
+  state.prs = state.prs.filter(x => x.id !== id);
+  syncDelete("prs", id); renderProcure();
+}
+function printPO(id) {
+  const pr = state.prs.find(x => x.id === id); if (!pr) return;
+  const job = state.jobs.find(j => j.code === pr.jobCode) || { name: "" };
+  document.getElementById("poDocumentContent").innerHTML = `
+    <div style="text-align:center; border-bottom:2px solid #0f172a; padding-bottom:8px; margin-bottom:10px;">
+      <div style="font-size:17px; font-weight:800;">ใบสั่งซื้อ (PURCHASE ORDER)</div>
+      <div style="font-size:12px; color:#475569;">เลขที่เอกสาร: <b>${esc(pr.poNo)}</b> | วันที่: ${esc(pr.date)}</div>
+    </div>
+    <p style="margin:4px 0;"><b>โครงการ:</b> ${esc(pr.jobCode)} - ${esc(job.name)}</p>
+    <p style="margin:4px 0;"><b>ผู้ขาย/ร้านค้า:</b> ${esc(pr.vendor || "-")}</p>
+    <p style="margin:4px 0;"><b>ผู้ขอซื้อ:</b> ${esc(pr.requester || "-")}</p>
+    <table style="margin-top:10px; border:1px solid #cbd5e1;">
+      <thead><tr><th>รายการ</th><th>จำนวน</th><th>ราคา/หน่วย</th><th>รวม</th></tr></thead>
+      <tbody><tr><td>${esc(pr.title)}</td><td>${pr.qty}</td><td>${formatBaht(pr.unitPrice)}</td><td><b>${formatBaht(pr.total)}</b></td></tr></tbody>
+    </table>
+    <div style="text-align:right; font-size:15px; font-weight:800; margin-top:10px;">ยอดสั่งซื้อสุทธิ: ${formatBaht(pr.total)}</div>
+  `;
+  document.getElementById("poPrintModal").classList.add("open");
+}
+
+/* TAB 3: INVENTORY & FIXED ASSETS */
+function renderStockAndAssets() {
+  const invEl = document.getElementById("inventoryList");
+  if (!state.inventory.length) invEl.innerHTML = `<div class="empty-state">ยังไม่มีรายการวัสดุในคลัง</div>`;
+  else invEl.innerHTML = state.inventory.map(item => {
+    const low = Number(item.qty) <= Number(item.minQty);
+    return `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${esc(item.name)} ${low ? `<span class="badge badge-rejected">ใกล้หมด!</span>` : ""}</div>
+          <div class="item-meta">คงเหลือ: <b>${item.qty} ${esc(item.unit)}</b> (ขั้นต่ำ ${item.minQty}) • ${formatBaht(item.unitCost)}/${esc(item.unit)}</div>
+        </div>
+        <div class="item-right">
+          <button class="btn btn-success btn-sm" onclick="openStockMove('${item.id}','in')">+รับ</button>
+          <button class="btn btn-warning btn-sm" onclick="openStockMove('${item.id}','out')">-เบิก</button>
+        </div>
+      </div>`;
+  }).join("");
+
+  const moveEl = document.getElementById("stockMoveList");
+  const moves = [...state.stockMoves].reverse().slice(0, 10);
+  moveEl.innerHTML = moves.length ? moves.map(m => `
+    <div class="item-row">
+      <div class="item-main">
+        <div class="item-title">${m.type === "in" ? "🟢 รับเข้า" : "🟠 เบิกใช้"}: ${esc(m.itemName)} (${m.qty})</div>
+        <div class="item-meta">${esc(m.date)} • งาน ${esc(m.jobCode)} • ${esc(m.note || "-")}</div>
+      </div>
+    </div>`).join("") : `<div class="empty-state">ยังไม่มีประวัติเคลื่อนไหวสต็อก</div>`;
+
+  const astEl = document.getElementById("assetList");
+  const stMap = { active: ["ใช้งานอยู่", "badge-received"], idle: ["ว่าง/สแตนด์บาย", "badge-approved"], repair: ["ซ่อมบำรุง", "badge-rejected"] };
+  astEl.innerHTML = state.assets.length ? state.assets.map(a => {
+    const [t, cls] = stMap[a.status] || stMap.active;
+    return `
+      <div class="item-row">
+        <div class="item-main">
+          <div class="item-title">${esc(a.code)} - ${esc(a.name)}</div>
+          <div class="item-meta">ประจำไซต์: <b>${esc(a.jobCode)}</b> • <span class="badge ${cls}">${t}</span></div>
+        </div>
+        <div class="item-right">
+          <button class="icon-btn" onclick="openAssetModal('${a.id}')">✏️</button>
+        </div>
+      </div>`;
+  }).join("") : `<div class="empty-state">ยังไม่มีทะเบียนเครื่องจักร</div>`;
+}
+
+function openInvModal() {
+  document.getElementById("invName").value = "";
+  document.getElementById("invQty").value = 0;
+  document.getElementById("invUnit").value = "หน่วย";
+  document.getElementById("invMin").value = 10;
+  document.getElementById("invCost").value = 0;
+  document.getElementById("invModal").classList.add("open");
+}
+function saveInventoryItem() {
+  const item = {
+    id: "inv_" + Date.now(),
+    name: document.getElementById("invName").value.trim(),
+    qty: Number(document.getElementById("invQty").value || 0),
+    unit: document.getElementById("invUnit").value.trim() || "หน่วย",
+    minQty: Number(document.getElementById("invMin").value || 0),
+    unitCost: Number(document.getElementById("invCost").value || 0)
+  };
+  if (!item.name) { showToast("กรุณาใส่ชื่อวัสดุ"); return; }
+  state.inventory.push(item);
+  syncWrite("inventory", item.id, item);
+  closeModal("invModal"); renderStockAndAssets(); showToast("เพิ่มวัสดุเข้าคลังแล้ว");
+}
+function openStockMove(invId, type) {
+  const item = state.inventory.find(x => x.id === invId); if (!item) return;
+  document.getElementById("moveInvId").value = invId;
+  document.getElementById("moveType").value = type;
+  document.getElementById("stockMoveTitle").textContent = (type === "in" ? "รับวัสดุเข้า: " : "เบิกวัสดุออก: ") + item.name;
+  document.getElementById("moveQty").value = 1;
+  document.getElementById("moveJobCode").innerHTML = state.jobs.map(j => `<option value="${esc(j.code)}" ${j.code === getActiveJob().code ? "selected" : ""}>${esc(j.code)} - ${esc(j.name)}</option>`).join("");
+  document.getElementById("moveNote").value = "";
+  document.getElementById("stockMoveModal").classList.add("open");
+}
+function confirmStockMove() {
+  const invId = document.getElementById("moveInvId").value;
+  const type = document.getElementById("moveType").value;
+  const qty = Number(document.getElementById("moveQty").value || 0);
+  const jobCode = document.getElementById("moveJobCode").value;
+  const note = document.getElementById("moveNote").value.trim();
+  const item = state.inventory.find(x => x.id === invId);
+  if (!item || qty <= 0) { showToast("ระบุจำนวนให้ถูกต้อง"); return; }
+  if (type === "out" && qty > item.qty) { showToast("ยอดคงเหลือในคลังไม่พอเบิก"); return; }
+  item.qty = type === "in" ? item.qty + qty : item.qty - qty;
+  const move = { id: "mv_" + Date.now(), itemId: invId, itemName: item.name, type, qty, jobCode, note, date: todayISO() };
+  state.stockMoves.push(move);
+  syncWrite("inventory", item.id, item);
+  syncWrite("stockMoves", move.id, move);
+  closeModal("stockMoveModal"); renderStockAndAssets(); showToast("บันทึกสต็อกแล้ว ✓");
+}
+
+function openAssetModal(id = null) {
+  document.getElementById("editAssetId").value = id || "";
+  document.getElementById("assetJob").innerHTML = state.jobs.map(j => `<option value="${esc(j.code)}">${esc(j.code)} - ${esc(j.name)}</option>`).join("");
+  if (id) {
+    const a = state.assets.find(x => x.id === id); if (!a) return;
+    document.getElementById("assetName").value = a.name;
+    document.getElementById("assetCode").value = a.code;
+    document.getElementById("assetJob").value = a.jobCode;
+    document.getElementById("assetStatus").value = a.status;
+  } else {
+    document.getElementById("assetName").value = "";
+    document.getElementById("assetCode").value = "EQ-00" + (state.assets.length + 1);
+    document.getElementById("assetJob").value = getActiveJob().code;
+    document.getElementById("assetStatus").value = "active";
+  }
+  document.getElementById("assetModal").classList.add("open");
+}
+function saveAsset() {
+  const editId = document.getElementById("editAssetId").value;
+  const a = {
+    id: editId || "ast_" + Date.now(),
+    code: document.getElementById("assetCode").value.trim().toUpperCase(),
+    name: document.getElementById("assetName").value.trim(),
+    jobCode: document.getElementById("assetJob").value,
+    status: document.getElementById("assetStatus").value
+  };
+  if (!a.name || !a.code) { showToast("กรุณากรอกข้อมูลเครื่องจักร"); return; }
+  if (editId) { const i = state.assets.findIndex(x => x.id === editId); if (i >= 0) state.assets[i] = a; }
+  else state.assets.push(a);
+  syncWrite("assets", a.id, a);
+  closeModal("assetModal"); renderStockAndAssets(); showToast("บันทึกเครื่องจักรแล้ว");
+}
+
+/* TAB 4: LABOR & OT */
+function calcWage() {
+  const w = Number(document.getElementById("wageWorkers").value || 0);
+  const r = Number(document.getElementById("wageRate").value || 0);
+  const d = Number(document.getElementById("wageDays").value || 0);
+  const oh = Number(document.getElementById("wageOtHours").value || 0);
+  const or = Number(document.getElementById("wageOtRate").value || 0);
+  const adv = Number(document.getElementById("wageAdvance").value || 0);
+  const norm = w * r * d, ot = w * oh * or, net = Math.max(0, norm + ot - adv);
+  document.getElementById("wageNormalTotal").textContent = formatBaht(norm);
+  document.getElementById("wageOtTotal").textContent = formatBaht(ot);
+  document.getElementById("wageAdvShow").textContent = "-" + formatBaht(adv);
+  document.getElementById("wageGrandTotal").textContent = formatBaht(net);
+  return { w, r, d, ot, adv, net };
+}
+function saveWageExpense() {
+  const job = getActiveJob(), c = calcWage();
+  if (c.net <= 0) { showToast("ยอดจ่ายสุทธิต้องมากกว่า 0"); return; }
+  const desc = document.getElementById("wageDesc").value.trim() || "ค่าแรงคนงานประจำวัน";
+  const note = document.getElementById("wageNote").value.trim() || "คิดค่าแรง";
+  const exp = {
+    id: "exp_" + Date.now(),
+    jobCode: job.code, category: "labor", title: desc,
+    date: document.getElementById("wageDate").value || todayISO(),
+    vendor: `${note} (${c.w}คน${c.ot > 0 ? " +OT" : ""}${c.adv > 0 ? " -เบิกล่วงหน้า" : ""})`,
+    qty: c.w * c.d, unitPrice: Math.round((c.net / Math.max(1, c.w * c.d)) * 100) / 100, total: c.net
+  };
+  state.expenses.push(exp);
+  syncWrite("expenses", exp.id, exp);
+  document.getElementById("wageDesc").value = "";
+  renderAll(); showToast(`ลงบัญชีค่าแรง ${formatBaht(c.net)} แล้ว ✓`);
+}
+
+/* TAB 5: FINANCE & BILLING */
+function renderFinance() {
+  const job = getActiveJob();
+  const bills = state.billings.filter(b => b.jobCode === job.code);
+  const el = document.getElementById("billingList");
+  el.innerHTML = bills.length ? bills.map(b => `
+    <div class="item-row">
+      <div class="item-main">
+        <div class="item-title">${esc(b.title)} <span class="badge ${b.status === "received" ? "badge-received" : "badge-pending"}">${b.status === "received" ? "รับเงินแล้ว" : "วางบิลแล้ว"}</span></div>
+        <div class="item-meta">${esc(b.date)} • ยอดงวด ${formatBaht(b.amount)} (หัก ${formatBaht(b.deduct)})</div>
+      </div>
+      <div class="item-right">
+        <strong class="text-success">${formatBaht(b.net)}</strong>
+        ${b.status !== "received" ? `<button class="btn btn-success btn-sm" onclick="markBillReceived('${b.id}')">รับเงิน</button>` : ""}
+        ${currentRole === "admin" ? `<button class="icon-btn del" onclick="deleteBill('${b.id}')">🗑️</button>` : ""}
+      </div>
+    </div>`).join("") : `<div class="empty-state">ยังไม่มีข้อมูลงวดงานในรหัส ${job.code}</div>`;
+
+  const tbody = document.getElementById("summaryTableBody");
+  tbody.innerHTML = state.jobs.map(j => {
+    const rec = state.billings.filter(b => b.jobCode === j.code && b.status === "received").reduce((s, b) => s + Number(b.net || 0), 0);
+    const sp = state.expenses.filter(e => e.jobCode === j.code).reduce((s, e) => s + Number(e.total || 0), 0);
+    const rem = Number(j.budget || 0) - sp;
+    return `
+      <tr class="${j.code === job.code ? "active-row" : ""}" onclick="switchActiveJob('${esc(j.code)}'); switchTab('tab-dash');" style="cursor:pointer;">
+        <td><b>${esc(j.code)}</b><br/><span style="font-size:10.5px;color:#64748b;">${esc(j.name)}</span></td>
+        <td>${formatBaht(j.budget)}</td>
+        <td class="text-primary">${formatBaht(rec)}</td>
+        <td class="text-danger">${formatBaht(sp)}</td>
+        <td class="${rem < 0 ? "text-danger" : "text-success"}">${formatBaht(rem)}</td>
+      </tr>`;
+  }).join("");
+}
+
+function openBillingModal() {
+  document.getElementById("billTitle").value = "";
+  document.getElementById("billAmount").value = "";
+  document.getElementById("billDeduct").value = 0;
+  document.getElementById("billDate").value = todayISO();
+  updateBillPreview();
+  document.getElementById("billingModal").classList.add("open");
+}
+function updateBillPreview() {
+  const a = Number(document.getElementById("billAmount").value || 0);
+  const d = Number(document.getElementById("billDeduct").value || 0);
+  document.getElementById("billNetPreview").textContent = formatBaht(Math.max(0, a - d));
+}
+function saveBilling() {
+  const amount = Number(document.getElementById("billAmount").value || 0);
+  const deduct = Number(document.getElementById("billDeduct").value || 0);
+  const b = {
+    id: "bill_" + Date.now(),
+    jobCode: getActiveJob().code,
+    title: document.getElementById("billTitle").value.trim(),
+    amount, deduct, net: Math.max(0, amount - deduct),
+    date: document.getElementById("billDate").value || todayISO(),
+    status: document.getElementById("billStatus").value
+  };
+  if (!b.title || b.amount <= 0) { showToast("กรุณากรอกชื่องวดและยอดเงิน"); return; }
+  state.billings.push(b);
+  syncWrite("billings", b.id, b);
+  closeModal("billingModal"); renderAll(); showToast("บันทึกงวดงานแล้ว");
+}
+function markBillReceived(id) {
+  const b = state.billings.find(x => x.id === id); if (!b) return;
+  b.status = "received";
+  syncWrite("billings", b.id, b); renderAll(); showToast("อัปเดตสถานะรับเงินแล้ว ✓");
+}
+function deleteBill(id) {
+  if (!confirm("ลบงวดงานนี้?")) return;
+  state.billings = state.billings.filter(x => x.id !== id);
+  syncDelete("billings", id); renderAll();
+}
+
+/* Jobs CRUD */
+function openJobSwitcher() {
+  document.getElementById("jobSwitcherList").innerHTML = state.jobs.map(j => {
+    const sp = state.expenses.filter(e => e.jobCode === j.code).reduce((s, e) => s + Number(e.total || 0), 0);
+    return `
+      <div class="item-row" onclick="switchActiveJob('${esc(j.code)}'); closeModal('jobSwitcherModal');" style="cursor:pointer; padding:10px; border:1.5px solid ${j.code === getActiveJob().code ? "var(--primary)" : "var(--border)"}; border-radius:12px; margin-bottom:8px;">
+        <div class="item-main">
+          <div class="item-title">${esc(j.code)} - ${esc(j.name)}</div>
+          <div class="item-meta">งบ ${formatBaht(j.budget)} • จ่ายแล้ว ${formatBaht(sp)} • คืบหน้า ${j.progress || 0}%</div>
+        </div>
+        <button class="icon-btn" onclick="event.stopPropagation(); closeModal('jobSwitcherModal'); openJobModal('${esc(j.code)}');">✏️</button>
+      </div>`;
+  }).join("");
+  document.getElementById("jobSwitcherModal").classList.add("open");
+}
+function switchActiveJob(code) {
+  state.meta.activeJobCode = code;
+  selectedDonutCategory = null;
+  saveLocalOnly(); renderAll(); showToast(`เลือกงาน ${code}`);
+}
+function openJobModal(code = null) {
+  document.getElementById("editJobOriginalCode").value = code || "";
+  const delBtn = document.getElementById("deleteJobBtn");
+  if (code) {
+    const j = state.jobs.find(x => x.code === code); if (!j) return;
+    document.getElementById("jobModalTitle").textContent = "แก้ไขข้อมูลโครงการ";
+    document.getElementById("jobCodeInput").value = j.code;
+    document.getElementById("jobNameInput").value = j.name;
+    document.getElementById("jobBudgetInput").value = j.budget;
+    document.getElementById("jobProgressInput").value = j.progress || 0;
+    delBtn.style.display = (state.jobs.length > 1 && currentRole === "admin") ? "inline-flex" : "none";
+  } else {
+    document.getElementById("jobModalTitle").textContent = "เพิ่มรหัสงานใหม่";
+    document.getElementById("jobCodeInput").value = "";
+    document.getElementById("jobNameInput").value = "";
+    document.getElementById("jobBudgetInput").value = "";
+    document.getElementById("jobProgressInput").value = 0;
+    delBtn.style.display = "none";
+  }
+  document.getElementById("jobModal").classList.add("open");
+}
+function saveJob() {
+  const orig = document.getElementById("editJobOriginalCode").value;
+  const code = document.getElementById("jobCodeInput").value.trim().toUpperCase();
+  const name = document.getElementById("jobNameInput").value.trim();
+  const budget = Number(document.getElementById("jobBudgetInput").value || 0);
+  const progress = Math.min(100, Math.max(0, Number(document.getElementById("jobProgressInput").value || 0)));
+  if (!code || !name) { showToast("กรุณากรอกรหัสงานและชื่อโครงการ"); return; }
+
+  const jobObj = { id: code, code, name, budget, progress };
+  if (orig) {
+    if (code !== orig && state.jobs.some(j => j.code === code)) { showToast("รหัสงานซ้ำ"); return; }
+    const idx = state.jobs.findIndex(j => j.code === orig);
+    if (idx >= 0) state.jobs[idx] = jobObj;
+    if (code !== orig) {
+      state.expenses.forEach(e => { if (e.jobCode === orig) { e.jobCode = code; syncWrite("expenses", e.id, e); } });
+      state.prs.forEach(p => { if (p.jobCode === orig) { p.jobCode = code; syncWrite("prs", p.id, p); } });
+      state.billings.forEach(b => { if (b.jobCode === orig) { b.jobCode = code; syncWrite("billings", b.id, b); } });
+      if (state.meta.activeJobCode === orig) state.meta.activeJobCode = code;
+      syncDelete("jobs", orig);
+    }
+  } else {
+    if (state.jobs.some(j => j.code === code)) { showToast("รหัสงานนี้มีแล้ว"); return; }
+    state.jobs.push(jobObj);
+    state.meta.activeJobCode = code;
+  }
+  syncWrite("jobs", jobObj.code, jobObj);
+  closeModal("jobModal"); renderAll(); showToast("บันทึกข้อมูลโครงการแล้ว");
+}
+function deleteCurrentEditingJob() {
+  const orig = document.getElementById("editJobOriginalCode").value;
+  if (!orig || state.jobs.length <= 1) return;
+  if (!confirm(`ลบรหัสงาน ${orig} และข้อมูลทั้งหมดในงานนี้?`)) return;
+  state.jobs = state.jobs.filter(j => j.code !== orig);
+  state.expenses = state.expenses.filter(e => e.jobCode !== orig);
+  state.prs = state.prs.filter(p => p.jobCode !== orig);
+  state.billings = state.billings.filter(b => b.jobCode !== orig);
+  state.meta.activeJobCode = state.jobs[0].code;
+  syncDelete("jobs", orig);
+  closeModal("jobModal"); renderAll(); showToast("ลบโครงการแล้ว");
+}
+
+/* Sync Modal & Export */
+function openSyncModal() {
+  document.getElementById("syncDbUrl").value = syncConfig.dbUrl || "";
+  document.getElementById("syncWorkspace").value = syncConfig.workspace || "SAR-TEAM-01";
+  document.getElementById("syncModal").classList.add("open");
+}
+function exportCSV(all) {
+  const jCode = getActiveJob().code;
+  const target = all ? state.expenses : state.expenses.filter(e => e.jobCode === jCode);
+  const header = ["รหัสงาน", "วันที่", "หมวดต้นทุน", "รายการ", "ร้านค้า/หมายเหตุ", "จำนวน", "ราคา/หน่วย", "ยอดรวม"];
+  const rows = target.map(e => [e.jobCode, e.date, getCat(e.category).name, e.title, e.vendor, e.qty, e.unitPrice, e.total].map(v => `"${String(v || "").replace(/"/g, '""')}"`).join(","));
+  const blob = new Blob(["\uFEFF" + header.join(",") + "\n" + rows.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = all ? `SiteCostERP_All_${todayISO()}.csv` : `SiteCostERP_${jCode}_${todayISO()}.csv`;
+  a.click(); showToast("ส่งออก CSV เรียบร้อย");
+}
+function backupJSON() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = `SiteCostERP_Backup_${todayISO()}.json`; a.click(); showToast("สำรองไฟล์แล้ว");
+}
+function restoreJSON(ev) {
+  const f = ev.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = (e) => {
+    try {
+      const p = JSON.parse(e.target.result);
+      if (p && p.jobs) {
+        state = normalizeState(p);
+        saveLocalOnly(); renderAll(); showToast("กู้คืนข้อมูลสำเร็จ!");
+      }
+    } catch (err) { showToast("ไฟล์ไม่ถูกต้อง"); }
+  };
+  rd.readAsText(f); ev.target.value = "";
+}
+function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+function closeOnBackdrop(e, id) { if (e.target.id === id) closeModal(id); }
+
+document.addEventListener("visibilitychange", () => { if (!document.hidden && isCloudActive()) manualSyncNow(); });
+
+initUI();
+renderAll();
+startRealtimeListener();
+</script>
+</body>
+</html>
